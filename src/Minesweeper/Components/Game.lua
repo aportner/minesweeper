@@ -26,6 +26,7 @@ function Game:getChildren()
 	local gameOver = self.props.gameOver
 	local onFlagCell = self.props.onFlagCell
 	local onRevealCell = self.props.onRevealCell
+	local onDoubleRevealCell = self.props.onDoubleRevealCell
 
 	local children = {}
 
@@ -41,6 +42,7 @@ function Game:getChildren()
 					yOffset = 50,
 					onFlagCell = onFlagCell,
 					onRevealCell = onRevealCell,
+					onDoubleRevealCell = onDoubleRevealCell,
 					gameOver = gameOver,
 				}
 			)
@@ -72,6 +74,9 @@ Game = RoactRodux.UNSTABLE_connect2(
     end,
     function(dispatch)
 		return {
+			onDoubleRevealCell = function(cell)
+				dispatch(Actions.DoubleRevealCell(cell))
+			end,
 			onNewGame = function(cell)
 				dispatch(Actions.NewGame(cell))
 			end,

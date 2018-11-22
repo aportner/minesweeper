@@ -52,6 +52,12 @@ function Cell:onInputBegan(_, inputObject)
 			isPressed = true,
 		})
 	end
+
+	if self.mouseState[Enum.UserInputType.MouseButton1] and
+		self.mouseState[Enum.UserInputType.MouseButton2] then
+		print("DOUBLE ON")
+		self.mouseState['double'] = true
+	end
 end
 
 function Cell:onInputEnded(_, inputObject)
@@ -64,6 +70,8 @@ function Cell:onInputEnded(_, inputObject)
 		return
 	end
 
+	print('ended', inputObject.UserInputType)
+
 	self.mouseState[inputObject.UserInputType] = false
 
 	local rbx = self.buttonRef.current
@@ -71,15 +79,33 @@ function Cell:onInputEnded(_, inputObject)
 	local rbxPosition = rbx.AbsolutePosition
 	local rbxSize = rbx.AbsoluteSize
 
-	if not self.props.cell.isRevealed and
-		position.X >= rbxPosition.X and position.Y >= rbxPosition.Y
+	print('position', position)
+
+	if position.X >= rbxPosition.X and position.Y >= rbxPosition.Y
 		and position.X < rbxPosition.X + rbxSize.X
 		and position.Y < rbxPosition.Y + rbxSize.Y then
-		if inputObject.UserInputType == Enum.UserInputType.MouseButton1 then
-			self:onLeftClick()
+
+		print('click on ', rbx)
+
+		if self.mouseState['double'] then
+			self.mouseState['double'] = false
+			self:onDoubleClick()
+		elseif inputObject.UserInputType == Enum.UserInputType.MouseButton1 then
+			if not self.props.cell.isRevealed then
+				self:onLeftClick()
+			end
 		elseif inputObject.UserInputType == Enum.UserInputType.MouseButton2 then
-			self:onRightClick()
+			if not self.props.cell.isRevealed then
+				self:onRightClick()
+			end
 		end
+	end
+
+	if self.mouseState['double'] and
+		not self.mouseState[Enum.UserInputType.MouseButton1] and
+		not self.mouseState[Enum.UserInputType.MouseButton2] then
+		print("DOUBLE OFF")
+		self.mouseState['double'] = false
 	end
 
 	if inputObject.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -88,6 +114,12 @@ function Cell:onInputEnded(_, inputObject)
 				self:setState({isPressed = false})
 			end
 		)
+	end
+end
+
+function Cell:onDoubleClick()
+	if not self.props.cell.isFlag then
+		self.props.onDoubleRevealCell(self.props.cell)
 	end
 end
 

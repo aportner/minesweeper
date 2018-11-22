@@ -34,11 +34,8 @@ function GameLogic.getNeighbors(state, index)
 	return neighbors
 end
 
-function GameLogic.reveal(state, index)
-	local queue = { state.cells:get(index) }
-
+function GameLogic.reveal(state, queue)
 	local count = 0
-
 	while #queue > 0 do
 		count = count + 1
 		if count > state.width * state.height then
@@ -72,6 +69,48 @@ function GameLogic.reveal(state, index)
 				end
 			end
 		end
+	end
+end
+
+function GameLogic.doubleReveal(state, cell)
+	if not cell.isRevealed or cell.numMines == 0 then
+		return
+	end
+
+	local index = state.cells:indexOf(cell)
+	local neighbors = GameLogic.getNeighbors(state, index)
+	local mines = 0
+	local lose = false
+
+	for _, neighbor in ipairs(neighbors) do
+		if neighbor.isFlag then
+			mines = mines + 1
+		end
+		lose = lose or neighbor.isFlag ~= neighbor.isMine
+	end
+
+	if mines ~= cell.numMines then
+		return
+	end
+
+	if lose then
+		for _, neighbor in ipairs(neighbors) do
+			if neighbor.isFlag ~= neighbor.isMine then
+				local neighborIndex = state.cells:indexOf(neighbor)
+				neighbor = neighbor:setRevealed(true)
+				state.cells = state.cells:set(neighborIndex, neighbor)
+			end
+		end
+		state.gameOver = true
+	else
+		local queue = {}
+		for _, neighbor in ipairs(neighbors) do
+			if not neighbor.isFlag and not neighbor.isRevealed then
+				table.insert(queue, neighbor)
+			end
+		end
+
+		GameLogic.reveal(state, queue)
 	end
 end
 

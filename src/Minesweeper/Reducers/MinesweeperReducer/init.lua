@@ -36,14 +36,24 @@ return Rodux.createReducer(
 			local cells = state.cells
 			local index = cells:indexOf(cell)
 
-			newState.cells = cells:set(index, cell:setRevealed(true))
+			cell = cell:setRevealed(true)
+			newState.cells = cells:set(index, cell)
 			if not cell.isMine then
-				GameLogic.reveal(newState, index)
+				GameLogic.reveal(newState, { cell })
 			end
 
 			newState.gameOver = newState.gameOver or cell.isMine
 
 			return newState
-		end
+		end,
+
+		DoubleRevealCell = function(state, action)
+			local newState = cloneTable(state)
+
+			local cell = action.cell
+			GameLogic.doubleReveal(newState, cell)
+
+			return newState
+		end,
 	}
 )

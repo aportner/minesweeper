@@ -12,6 +12,13 @@ return {
 		}
 	end,
 
+	DoubleRevealCell = function(cell)
+		return {
+			type = 'DoubleRevealCell',
+			cell = cell,
+		}
+	end,
+
 	RevealCell = function(cell)
 		return {
 			type = 'RevealCell',
