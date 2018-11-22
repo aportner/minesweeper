@@ -1,0 +1,26 @@
+{
+  "name": "solitaire",
+  "servePort": 8000,
+  "partitions": {
+    "src": {
+      "path": "src/Minesweeper",
+      "target": "ReplicatedStorage.Minesweeper"
+    },
+    "roact" : {
+      "path": "roact/lib",
+      "target": "ReplicatedStorage.Roact"
+    },
+    "roact-rodux" : {
+      "path": "roact-rodux/lib",
+      "target": "ReplicatedStorage.RoactRodux"
+    },
+    "rodux" : {
+      "path": "rodux/lib",
+      "target": "ReplicatedStorage.Rodux"
+    },
+    "starter": {
+      "path": "src/StarterPlayerScripts",
+      "target": "StarterPlayer.StarterPlayerScripts"
+    }
+  }
+}
