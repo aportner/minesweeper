@@ -21,6 +21,7 @@ return function(height, width, mines)
 		width = width,
 		height = height,
 		mines = mines,
-		cells = List.new(mineTable):shuffle()
+		cells = List.new(mineTable):shuffle(),
+		isNewGame = true,
 	}
 end

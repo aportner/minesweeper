@@ -36,6 +36,31 @@ return Rodux.createReducer(
 			local cells = state.cells
 			local index = cells:indexOf(cell)
 
+			if newState.isNewGame then
+				if cell.isMine then
+					cell = cell:setMine(false)
+					cells = cells:set(index, cell)
+
+					local foundCell = false
+					while not foundCell do
+						local newIndex = math.random(cells:length())
+
+						if newIndex ~= index then
+							local newCell = cells:get(newIndex)
+
+							if not newCell.isMine then
+								newCell:setMine(true)
+								cells = cells:set(newIndex, newCell)
+								foundCell = true
+							end
+						end
+					end
+				end
+
+				newState.cells = cells
+				newState.isNewGame = false
+			end
+
 			cell = cell:setRevealed(true)
 			newState.cells = cells:set(index, cell)
 			if not cell.isMine then
