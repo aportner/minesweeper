@@ -29,7 +29,7 @@ function Cell:init()
 end
 
 function Cell:didMount()
-	self.mouseState = {}
+	self.state = {}
 end
 
 function Cell:onInputBegan(_, inputObject)
@@ -42,7 +42,9 @@ function Cell:onInputBegan(_, inputObject)
 		return
 	end
 
-	self.mouseState[inputObject.UserInputType] = true
+	self:setState({
+		[inputObject.UserInputType] = true,
+	})
 
 	local cell = self.props.cell
 
@@ -51,9 +53,11 @@ function Cell:onInputBegan(_, inputObject)
 		self.props.onPressCell(cell)
 	end
 
-	if self.mouseState[Enum.UserInputType.MouseButton1] and
-		self.mouseState[Enum.UserInputType.MouseButton2] then
-		self.mouseState['double'] = true
+	if self.state[Enum.UserInputType.MouseButton1] and
+		self.state[Enum.UserInputType.MouseButton2] then
+		self:setState({
+			double = true,
+		})
 		self.props.onPressCellAndNeighbors(cell)
 	end
 end
@@ -68,7 +72,9 @@ function Cell:onInputEnded(_, inputObject)
 		return
 	end
 
-	self.mouseState[inputObject.UserInputType] = false
+	self:setState({
+		[inputObject.UserInputType] = false,
+	})
 
 	local rbx = self.buttonRef.current
 	local position = inputObject.Position
@@ -80,7 +86,7 @@ function Cell:onInputEnded(_, inputObject)
 		and position.X < rbxPosition.X + rbxSize.X
 		and position.Y < rbxPosition.Y + rbxSize.Y then
 
-		if self.mouseState['double'] then
+		if self.state['double'] then
 			self:onDoubleClick()
 		elseif inputObject.UserInputType == Enum.UserInputType.MouseButton1 then
 			if not self.props.cell.isRevealed then
@@ -93,8 +99,8 @@ function Cell:onInputEnded(_, inputObject)
 		end
 	end
 
-	if self.mouseState['double'] then
-		self.mouseState['double'] = false
+	if self.state['double'] then
+		self:setState({ double = false })
 	end
 
 	if inputObject.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -105,7 +111,7 @@ end
 function Cell:onDoubleClick()
 	local cell = self.props.cell
 
-	self.mouseState['double'] = false
+	self:setState({ double = false })
 
 	if not self.props.cell.isFlag then
 		self.props.onDoubleRevealCell(cell)
