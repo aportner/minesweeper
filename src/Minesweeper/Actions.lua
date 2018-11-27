@@ -25,4 +25,32 @@ return {
 			cell = cell,
 		}
 	end,
+
+	PressCell = function(cell)
+		return {
+			type = 'PressCell',
+			cell = cell,
+		}
+	end,
+
+	UnpressCell = function(cell)
+		return {
+			type = 'UnpressCell',
+			cell = cell,
+		}
+	end,
+
+	PressCellAndNeighbors = function(cell)
+		return {
+			type = 'PressCellAndNeighbors',
+			cell = cell,
+		}
+	end,
+
+	UnpressCellAndNeighbors = function(cell)
+		return {
+			type = 'UnpressCellAndNeighbors',
+			cell = cell,
+		}
+	end,
 }

@@ -48,15 +48,13 @@ function Cell:onInputBegan(_, inputObject)
 
 	if inputObject.UserInputType == Enum.UserInputType.MouseButton1
 		and not cell.isFlag then
-		self:setState({
-			isPressed = true,
-		})
+		self.props.onPressCell(cell)
 	end
 
 	if self.mouseState[Enum.UserInputType.MouseButton1] and
 		self.mouseState[Enum.UserInputType.MouseButton2] then
-		print("DOUBLE ON")
 		self.mouseState['double'] = true
+		self.props.onPressCellAndNeighbors(cell)
 	end
 end
 
@@ -70,25 +68,19 @@ function Cell:onInputEnded(_, inputObject)
 		return
 	end
 
-	print('ended', inputObject.UserInputType)
-
 	self.mouseState[inputObject.UserInputType] = false
 
 	local rbx = self.buttonRef.current
 	local position = inputObject.Position
 	local rbxPosition = rbx.AbsolutePosition
 	local rbxSize = rbx.AbsoluteSize
-
-	print('position', position)
+	local cell = self.props.cell
 
 	if position.X >= rbxPosition.X and position.Y >= rbxPosition.Y
 		and position.X < rbxPosition.X + rbxSize.X
 		and position.Y < rbxPosition.Y + rbxSize.Y then
 
-		print('click on ', rbx)
-
 		if self.mouseState['double'] then
-			self.mouseState['double'] = false
 			self:onDoubleClick()
 		elseif inputObject.UserInputType == Enum.UserInputType.MouseButton1 then
 			if not self.props.cell.isRevealed then
@@ -101,26 +93,24 @@ function Cell:onInputEnded(_, inputObject)
 		end
 	end
 
-	if self.mouseState['double'] and
-		not self.mouseState[Enum.UserInputType.MouseButton1] and
-		not self.mouseState[Enum.UserInputType.MouseButton2] then
-		print("DOUBLE OFF")
+	if self.mouseState['double'] then
 		self.mouseState['double'] = false
 	end
 
 	if inputObject.UserInputType == Enum.UserInputType.MouseButton1 then
-		spawn(
-			function()
-				self:setState({isPressed = false})
-			end
-		)
+		self.props.onUnpressCell( cell )
 	end
 end
 
 function Cell:onDoubleClick()
+	local cell = self.props.cell
+
+	self.mouseState['double'] = false
+
 	if not self.props.cell.isFlag then
-		self.props.onDoubleRevealCell(self.props.cell)
+		self.props.onDoubleRevealCell(cell)
 	end
+	self.props.onUnpressCellAndNeighbors(cell)
 end
 
 function Cell:onLeftClick()
@@ -149,7 +139,7 @@ function Cell:getImageRectOffset()
 			return self.getSprite(6, 1)
 		elseif cell.isFlag then
 			return self.getSprite(3, 1)
-		elseif self.state.isPressed then
+		elseif cell.isPressed then
 			return self.getSprite(2, 1)
 		end
 	end

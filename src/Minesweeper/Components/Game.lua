@@ -27,6 +27,10 @@ function Game:getChildren()
 	local onFlagCell = self.props.onFlagCell
 	local onRevealCell = self.props.onRevealCell
 	local onDoubleRevealCell = self.props.onDoubleRevealCell
+	local onPressCell = self.props.onPressCell
+	local onUnpressCell = self.props.onUnpressCell
+	local onPressCellAndNeighbors = self.props.onPressCellAndNeighbors
+	local onUnpressCellAndNeighbors = self.props.onUnpressCellAndNeighbors
 
 	local children = {}
 
@@ -43,6 +47,10 @@ function Game:getChildren()
 					onFlagCell = onFlagCell,
 					onRevealCell = onRevealCell,
 					onDoubleRevealCell = onDoubleRevealCell,
+					onPressCell = onPressCell,
+					onUnpressCell = onUnpressCell,
+					onPressCellAndNeighbors = onPressCellAndNeighbors,
+					onUnpressCellAndNeighbors = onUnpressCellAndNeighbors,
 					gameOver = gameOver,
 				}
 			)
@@ -85,6 +93,18 @@ Game = RoactRodux.UNSTABLE_connect2(
 			end,
 			onRevealCell = function(cell)
 				dispatch(Actions.RevealCell(cell))
+			end,
+			onPressCell = function(cells)
+				dispatch(Actions.PressCell(cells))
+			end,
+			onUnpressCell = function(cells)
+				dispatch(Actions.UnpressCell(cells))
+			end,
+			onPressCellAndNeighbors = function(cells)
+				dispatch(Actions.PressCellAndNeighbors(cells))
+			end,
+			onUnpressCellAndNeighbors = function(cells)
+				dispatch(Actions.UnpressCellAndNeighbors(cells))
 			end,
         }
     end

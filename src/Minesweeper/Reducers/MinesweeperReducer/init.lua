@@ -15,9 +15,9 @@ return Rodux.createReducer(
 		FlagCell = function(state, action)
 			local newState = cloneTable(state)
 
-			local cell = action.cell
 			local cells = state.cells
-			local index = cells:indexOf(cell)
+			local index = action.cell.index
+			local cell = cells:get(index)
 
 			newState.cells = cells:set(
 				index,
@@ -32,9 +32,9 @@ return Rodux.createReducer(
 		RevealCell = function(state, action)
 			local newState = cloneTable(state)
 
-			local cell = action.cell
 			local cells = state.cells
-			local index = cells:indexOf(cell)
+			local index = action.cell.index
+			local cell = cells:get(index)
 
 			if newState.isNewGame then
 				if cell.isMine then
@@ -78,6 +78,36 @@ return Rodux.createReducer(
 			local cell = action.cell
 			GameLogic.doubleReveal(newState, cell)
 
+			return newState
+		end,
+
+		PressCell = function(state, action)
+			local newState = cloneTable(state)
+			GameLogic.pressCells(newState, { action.cell }, true)
+			return newState
+		end,
+
+		UnpressCell = function(state, action)
+			local newState = cloneTable(state)
+			GameLogic.pressCells(newState, { action.cell }, false)
+			return newState
+		end,
+
+		PressCellAndNeighbors = function(state, action)
+			local newState = cloneTable(state)
+			local cell = action.cell
+			local cells = GameLogic.getNeighbors(state, cell.index)
+			table.insert(cells, cell)
+			GameLogic.pressCells(newState, cells, true)
+			return newState
+		end,
+
+		UnpressCellAndNeighbors = function(state, action)
+			local newState = cloneTable(state)
+			local cell = action.cell
+			local cells = GameLogic.getNeighbors(state, cell.index)
+			table.insert(cells, cell)
+			GameLogic.pressCells(newState, cells, false)
 			return newState
 		end,
 	}

@@ -11,17 +11,26 @@ return function(height, width, mines)
 	local mineTable = {}
 	for i = 1, width * height do
 		local mine = CellModel.new()
+
 		if i <= mines then
 			mine = mine:setMine(true)
 		end
+
 		mineTable[i] = mine
 	end
+
+	local cells = List.new(mineTable):shuffle()
+	cells = cells:map(
+		function(cell, index)
+			return cell:setIndex(index)
+		end
+	)
 
 	return {
 		width = width,
 		height = height,
 		mines = mines,
-		cells = List.new(mineTable):shuffle(),
+		cells = cells,
 		isNewGame = true,
 	}
 end

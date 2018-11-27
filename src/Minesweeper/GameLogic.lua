@@ -77,7 +77,8 @@ function GameLogic.doubleReveal(state, cell)
 		return
 	end
 
-	local index = state.cells:indexOf(cell)
+	local index = cell.index
+	cell = state.cells:get(index)
 	local neighbors = GameLogic.getNeighbors(state, index)
 	local mines = 0
 	local lose = false
@@ -111,6 +112,17 @@ function GameLogic.doubleReveal(state, cell)
 		end
 
 		GameLogic.reveal(state, queue)
+	end
+end
+
+function GameLogic.pressCells(state, pressCells, value)
+	for _, cell in ipairs(pressCells) do
+		local index = cell.index
+		cell = state.cells:get(index)
+		state.cells = state.cells:set(
+			index,
+			cell:setPressed(value)
+		)
 	end
 end
 
