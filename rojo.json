@@ -1,5 +1,5 @@
 {
-  "name": "solitaire",
+  "name": "Minesweeper",
   "servePort": 8000,
   "partitions": {
     "src": {
